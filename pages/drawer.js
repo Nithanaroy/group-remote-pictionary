@@ -1,21 +1,44 @@
-import {Component} from "react";
+import { Component } from "react";
 import PropTypes from "prop-types"
 
 export default class Drawer extends Component {
+    
+    canvasInstance = null
+    
+    constructor(props) {
+        super(props)
+        this.state = {
+            
+        }
+    }
+
+    submitDrawing = () => {
+        const drawingURL = this.canvasInstance?.toDataURL();
+        this.props.onDrawingSubmit(this.state.word, drawingURL)
+    }
+
+    fetchWord = () => {
+        // https://www.thegamegal.com/printables/
+        this.setState({ word: "Banana" });
+    }
+
+    componentDidMount() {
+        this.canvasInstance = document.getElementById("drawingCanvas");
+        this.fetchWord();
+    }
+
     render() {
-        const word = "Banana"
         return (
             <div>
                 <h1>Time to draw...</h1>
                 <div>
-                    <p>Word: </p>
-                    <p>{word}</p>
+                    <p>Word: <strong>{this.state.word}</strong></p>
                 </div>
                 <div>
                     <p>Drawing</p>
-                    <canvas></canvas>
+                    <canvas id="drawingCanvas"></canvas>
                 </div>
-                <button type="button">Submit</button>
+                <button type="button" onClick={this.submitDrawing}>Submit</button>
             </div>
         )
     }
