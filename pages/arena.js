@@ -1,9 +1,10 @@
 import { Component } from "react";
 import { PropTypes } from "prop-types";
+import Head from "next/head";
+
 import Guesser from "./guesser"
 import Drawer from "./drawer"
 import { defaultRoomState } from "../models/state-manager";
-import { extractRoomId } from "../scripts/game-room";
 import { getRoomState, updateRoomState } from "../models/firestore-state-manager";
 import Gamer from "./gamer";
 import Alert from "./alert";
@@ -133,6 +134,9 @@ export default class Arena extends Component {
         const postLoadingScreen = this.state.showTurnCompleteScreen ? turnCompleteScreen : (this.state.roomId ? readyRoomScreen : roomNotFoundScreen)
         return (
             <div>
+                <Head>
+                    <title>Group Pictionary: {this.state.roomName} room</title>
+                </Head>
                 <Alert alertMsg={this.state.alertMsg} />
                 {this.state.initializingRoom ? loadingRoomScreen : postLoadingScreen}
             </div>

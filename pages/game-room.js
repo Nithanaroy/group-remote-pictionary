@@ -10,7 +10,7 @@ export default class GameRoom extends Component {
         this.state = {
             alertMsg: "",
             roomId: "",
-            roomName: "Flanthar Fagidis"
+            roomName: ""
         }
     }
 
@@ -33,7 +33,7 @@ export default class GameRoom extends Component {
                 <p>To start playing with a group of friends create a room</p>
                 <div>
                     <label htmlFor="roomNameTb">Room name</label>
-                    <input type="text" name="roomNameTb" onChange={(e) => this.setState({ roomId: e.target.value })} value={this.state.roomName} />
+                    <input type="text" name="roomNameTb" onChange={(e) => this.setState({ roomName: e.target.value })} value={this.state.roomName} />
                 </div>
                 <button type="button" onClick={this.onCreateRoom}>Create New Room</button>
             </div>

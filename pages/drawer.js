@@ -32,7 +32,6 @@ export default class Drawer extends Component {
                     <p>Word: <strong>{this.state.word}</strong></p>
                 </div>
                 <div>
-                    <p>Drawing</p>
                     <Canvas id="drawerCanvas" syncCanvasRef={(ref) => this.canvasDOM = ref} />
                 </div>
                 <button type="button" onClick={this.submitDrawing}>Submit</button>

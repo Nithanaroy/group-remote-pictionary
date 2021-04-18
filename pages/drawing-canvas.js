@@ -2,7 +2,7 @@ import { Component } from "react";
 import { PropTypes } from "prop-types";
 
 // Forked from https://github.com/Nithanaroy/invisible_pen/blob/master/app/client/helpers/drawing_canvas.js
-class FreeFormDrawingCanvas {
+class CanvasController {
     constructor(canvasContainer, initX = null, initY = null) {
         this.c = canvasContainer;
         this.ctx = canvasContainer.getContext("2d");
@@ -85,12 +85,17 @@ export default class Canvas extends Component {
     componentDidMount() {
         const canvasRef = document.getElementById(this.props.id)
         this.props.syncCanvasRef(canvasRef)
-        this.canvasController = new FreeFormDrawingCanvas(canvasRef)
+        this.canvasController = new CanvasController(canvasRef)
+        // Prevent page scroll on touch move. Gives a better canvas drawing experience on touch devices
+        document.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
     }
 
     render() {
         return (
-            <canvas id={this.props.id}></canvas>
+            <div>
+                <button onClick={() => this.canvasController.cleanCanvas()}>Clear canvas</button>
+                <canvas id={this.props.id} style={{ border: "1px solid #CCC" }} ></canvas>
+            </div>
         )
     }
 }
