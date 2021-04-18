@@ -1,4 +1,9 @@
-export const defaultState = { "name": "", "word": "", "drawing": "", "streak": 0 };
+/**
+ * Maintain app state using URLs
+ * Doesn't require any additional database
+ */
+
+import {defaultState} from "./state-manager";
 
 export function parseUrl() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -25,4 +30,20 @@ export function encodeState(name, word, drawing, streak) {
     url.searchParams.append("gameState", stateStr);
     url.searchParams.append("updatedAt", updatedAt);
     return url.toString();
+}
+
+export async function shortenGameUrl(url) {
+    const firebaseApiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY // next.js builder replaces this
+    const resp = await fetch(`https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=${firebaseApiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            "dynamicLinkInfo": {
+                "domainUriPrefix": "https://grouppictionary.page.link",
+                "link": url
+            }
+        })
+    });
+    const shortUrl = (await resp.json()).shortLink;
+    return shortUrl;
 }

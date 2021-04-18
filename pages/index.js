@@ -1,10 +1,10 @@
-import Stage from "./stage";
+import GameRoom from "./game-room";
 
 export default function Home() {
 
   return (
     <div className="container">
-      <Stage />
+      <GameRoom />
 
       <style jsx>{`
         .container {
