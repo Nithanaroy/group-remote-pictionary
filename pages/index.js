@@ -1,9 +1,14 @@
+import Head from "next/head";
 import GameRoom from "./game-room";
 
 export default function Home() {
 
   return (
     <div className="container">
+      <Head>
+        <title>Group Pictionary</title>
+        <meta name="viewport" content="width=device-width,user-scalable=no" />
+      </Head>
       <GameRoom />
 
       <style jsx>{`

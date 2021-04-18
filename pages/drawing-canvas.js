@@ -9,8 +9,11 @@ class FreeFormDrawingCanvas {
         this.lastX = initX;
         this.lastY = initY;
 
-        canvasContainer.addEventListener("mousedown", this.initPathCoords); // fires before mouse left btn is released
-        canvasContainer.addEventListener("mousemove", this.freeForm);
+        canvasContainer.addEventListener("touchstart", this.initPathCoordsForTouch); // fires before the finger is lifted
+        canvasContainer.addEventListener("touchmove", this.freeFormForTouch);
+        canvasContainer.addEventListener("mousedown", this.initPathCoordsForMouse); // fires before mouse left btn is released
+        canvasContainer.addEventListener("mousemove", this.freeFormForMouse);
+
         this.setStyles();
     }
 
@@ -18,13 +21,27 @@ class FreeFormDrawingCanvas {
         // this.c.style.background = "black";
     };
 
-    initPathCoords = (e) => {
+    initPathCoordsForTouch = (e) => {
+        const { clientX, clientY } = e.targetTouches[0];
+        this.initPathCoords(clientX, clientY);
+    }
+
+    initPathCoordsForMouse = (e) => {
+        this.initPathCoords(e.clientX, e.clientY);
+    }
+
+    initPathCoords = (userX, userY) => {
         const { x, y } = this.c.getBoundingClientRect();
-        this.lastX = e.clientX - x;
-        this.lastY = e.clientY - y;
+        this.lastX = userX - x;
+        this.lastY = userY - y;
     };
 
-    freeForm = (e) => {
+    freeFormForTouch = (e) => {
+        const { clientX, clientY } = e.targetTouches[0];
+        this.drawLineTo(clientX, clientY);
+    }
+
+    freeFormForMouse = (e) => {
         if (e.buttons !== 1) return; // left button is not pushed yet
         this.drawLineTo(e.clientX, e.clientY);
     };

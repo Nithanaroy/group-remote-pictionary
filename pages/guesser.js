@@ -13,7 +13,7 @@ export default class Guesser extends Component {
     }
 
     validateGuess = () => {
-        const correctGuess = this.props.drawingOf.toUpperCase() === this.state.guess.toUpperCase();
+        const correctGuess = this.props.drawingOf.toUpperCase() === this.state.guess.trim().toUpperCase();
         if (correctGuess) {
             this.props.onCorrectGuess()
         } else {

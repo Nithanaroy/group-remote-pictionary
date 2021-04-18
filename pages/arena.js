@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { PropTypes } from "prop-types";
 import Guesser from "./guesser"
 import Drawer from "./drawer"
 import { defaultRoomState } from "../models/state-manager";
@@ -23,9 +24,8 @@ export default class Arena extends Component {
     }
 
     async initializeRoom() {
-        const roomId = extractRoomId();
-        if (roomId) {
-            const roomState = await getRoomState(roomId);
+        if (this.props.roomId) {
+            const roomState = await getRoomState(this.props.roomId);
             if (roomState) {
                 this.setState({ ...roomState, roomNotFoundError: false });
             } else {
@@ -138,4 +138,8 @@ export default class Arena extends Component {
             </div>
         )
     }
+}
+
+Arena.propTypes = {
+    roomId: PropTypes.string.isRequired
 }
