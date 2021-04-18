@@ -4,15 +4,19 @@ import Drawer from "./drawer"
 import { defaultRoomState } from "../models/state-manager";
 import { extractRoomId } from "../scripts/game-room";
 import { getRoomState, updateRoomState } from "../models/firestore-state-manager";
+import Gamer from "./gamer";
+import Alert from "./alert";
 
 export default class Arena extends Component {
     constructor(props) {
         super(props)
         this.state = {
             ...defaultRoomState,
+            gamer: "",
             initializingRoom: true,
             showTurnCompleteScreen: false,
-            gameUrl: ""
+            gameUrl: "",
+            alertMsg: ""
         }
     }
 
@@ -34,23 +38,45 @@ export default class Arena extends Component {
         return this.state.mode === "guess" ? "draw" : "guess";
     }
 
+    _validateRoomState = () => {
+        const validName = this.state.gamer.trim().length > 0
+        if (!validName) {
+            this.setState({ alertMsg: "Please provide gamer's name" })
+            return false
+        }
+        this.setState({ alertMsg: "" });
+        return true;
+    }
+
     finishDrawerTurn = (word, drawingAsURL) => {
-        const myDrawingScore = (this.state.drawingScores[this.state.drawnBy] ?? 0) + 1
-        const newDrawingScores = { ...this.state.drawingScores, drawnBy: myDrawingScore }
+        const myDrawingScore = (this.state.drawingScores[this.state.gamer] ?? 0) + 1
+        const newDrawingScores = { ...this.state.drawingScores, [this.state.gamer]: myDrawingScore }
         const newRoomState = {
             drawingOf: word,
             drawing: drawingAsURL,
-            drawnBy: this.state.drawnBy,
+            drawnBy: this.state.gamer,
             mode: this._computeFlippedGameMode(),
             drawingScores: newDrawingScores,
             streak: this.state.streak + 1
         }
-        updateRoomState(this.state.roomId, newRoomState)
-        this.setState({ showTurnCompleteScreen: true });
+        if (this._validateRoomState()) {
+            updateRoomState(this.state.roomId, newRoomState)
+            this.setState({ showTurnCompleteScreen: true });
+        }
     }
 
     finishGuesserTurn = () => {
-        this.setState({ showTurnCompleteScreen: true });
+        const myGuessingScore = (this.state.guessingScores[this.state.gamer] ?? 0) + 1
+        const newGuessingScores = { ...this.state.guessingScores, [this.state.gamer]: myGuessingScore }
+        const newRoomState = {
+            mode: this._computeFlippedGameMode(),
+            guessingScores: newGuessingScores,
+            streak: this.state.streak + 1
+        }
+        if (this._validateRoomState()) {
+            updateRoomState(this.state.roomId, newRoomState)
+            this.setState({ showTurnCompleteScreen: true });
+        }
     }
 
     async componentDidMount() {
@@ -65,13 +91,10 @@ export default class Arena extends Component {
                 <p>Please wait</p>
             </div>
         )
-        const guesser = <Guesser drawing={this.state.drawing} drawingOf={this.state.drawingOf} onCorrectGuess={this.finishGuesserTurn} />
+        const guesser = <Guesser drawing={this.state.drawing} drawnBy={this.state.drawnBy} drawingOf={this.state.drawingOf} onCorrectGuess={this.finishGuesserTurn} />
         const readyRoomScreen = (
             <div>
-                <div>
-                    <label htmlFor="gamerNameTb">Name</label>
-                    <input type="text" name="gamerNameTb" value={this.state.drawnBy} onChange={e => this.setState({ drawnBy: e.target.value })} />
-                </div>
+                <Gamer name={this.state.name} onNameChange={newName => this.setState({ gamer: newName })} />
                 <p>You are in {this.state.roomName} room</p>
 
                 {this.state.mode === "guess" ? guesser : <Drawer onDrawingSubmit={this.finishDrawerTurn} />}
@@ -96,6 +119,7 @@ export default class Arena extends Component {
         const postLoadingScreen = this.state.showTurnCompleteScreen ? turnCompleteScreen : (this.state.roomId ? readyRoomScreen : roomNotFoundScreen)
         return (
             <div>
+                <Alert alertMsg={this.state.alertMsg} />
                 {this.state.initializingRoom ? loadingRoomScreen : postLoadingScreen}
             </div>
         )

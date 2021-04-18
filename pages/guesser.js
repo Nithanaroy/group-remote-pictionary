@@ -28,7 +28,7 @@ export default class Guesser extends Component {
                 <Alert alertMsg={this.state.alertMsg} />
                 <form onSubmit={e => { e.preventDefault(); this.validateGuess(); }}>
                     <div>
-                        <p>Drawing</p>
+                        <p>by {this.props.drawnBy}</p>
                         <div><img src={this.props.drawing} alt="drawing to be guessed" /></div>
                     </div>
                     <div>
@@ -45,5 +45,6 @@ export default class Guesser extends Component {
 Guesser.propTypes = {
     onCorrectGuess: PropTypes.func.isRequired,
     drawing: PropTypes.string.isRequired,
-    drawingOf: PropTypes.string.isRequired
+    drawingOf: PropTypes.string.isRequired,
+    drawnBy: PropTypes.string.isRequired
 }

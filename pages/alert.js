@@ -3,7 +3,7 @@ import { PropTypes } from "prop-types";
 
 export default class Alert extends Component {
     render() {
-        return this.props.alertMsg.trim().length > 0 ? <div>{this.props.alertMsg}</div> : <div></div>
+        return this.props.alertMsg?.trim().length > 0 ? <div>{this.props.alertMsg}</div> : <div></div>
     }
 }
 
