@@ -7,6 +7,8 @@ import { getRoomState, updateRoomState } from "../models/firestore-state-manager
 import Gamer from "./gamer";
 import Alert from "./alert";
 
+const [GUESS_MODE, DRAW_MODE] = ["guess", "draw"]
+
 export default class Arena extends Component {
     constructor(props) {
         super(props)
@@ -24,7 +26,6 @@ export default class Arena extends Component {
         const roomId = extractRoomId();
         if (roomId) {
             const roomState = await getRoomState(roomId);
-            console.log(roomState);
             if (roomState) {
                 this.setState({ ...roomState, roomNotFoundError: false });
             } else {
@@ -35,7 +36,7 @@ export default class Arena extends Component {
     }
 
     _computeFlippedGameMode = () => {
-        return this.state.mode === "guess" ? "draw" : "guess";
+        return this.state.mode === GUESS_MODE ? DRAW_MODE : GUESS_MODE;
     }
 
     _validateRoomState = () => {
@@ -61,7 +62,7 @@ export default class Arena extends Component {
         }
         if (this._validateRoomState()) {
             updateRoomState(this.state.roomId, newRoomState)
-            this.setState({ showTurnCompleteScreen: true });
+            this.setState({ showTurnCompleteScreen: true, drawing: drawingAsURL });
         }
     }
 
@@ -76,6 +77,16 @@ export default class Arena extends Component {
         if (this._validateRoomState()) {
             updateRoomState(this.state.roomId, newRoomState)
             this.setState({ showTurnCompleteScreen: true });
+        }
+    }
+
+    getShareUrl = () => {
+        try {
+            const url = new URL(this.state.gameUrl);
+            url.searchParams.set("streak", this.state.streak);
+            return url.toString()
+        } catch (error) {
+            // happens while rendering and can be ignored
         }
     }
 
@@ -94,10 +105,10 @@ export default class Arena extends Component {
         const guesser = <Guesser drawing={this.state.drawing} drawnBy={this.state.drawnBy} drawingOf={this.state.drawingOf} onCorrectGuess={this.finishGuesserTurn} />
         const readyRoomScreen = (
             <div>
-                <Gamer name={this.state.name} onNameChange={newName => this.setState({ gamer: newName })} />
+                <Gamer onNameChange={newName => this.setState({ gamer: newName })} />
                 <p>You are in {this.state.roomName} room</p>
 
-                {this.state.mode === "guess" ? guesser : <Drawer onDrawingSubmit={this.finishDrawerTurn} />}
+                {this.state.mode === GUESS_MODE ? guesser : <Drawer onDrawingSubmit={this.finishDrawerTurn} />}
             </div>
         )
         const roomNotFoundScreen = (
@@ -106,12 +117,15 @@ export default class Arena extends Component {
                 <p>Find the right room link or <a href="/">go here</a> to create a new room</p>
             </div>
         )
+
+        const drawerTurnCompleteMessage = <p>Awesome work! Now share this URL with your friends on any messaging app or WhatsApp group to continue the game</p>
+        const guesserTurnCompleteMessage = <p>Super guess! Challenge others by drawing the next word by visiting the below link or take a challenge again by sharing this URL with your friends on any messaging app or WhatsApp group to continue the game</p>
         const turnCompleteScreen = (
             <div>
                 <img src={this.state.drawing} />
-                Share this URL with your friends on any messaging app or WhatsApp group to continue the game
+                { this.state.mode === GUESS_MODE ? guesserTurnCompleteMessage : drawerTurnCompleteMessage}
                 <div>
-                    <a href={this.state.gameUrl}>{this.state.gameUrl}</a>
+                    <a href={this.getShareUrl()}>{this.getShareUrl()}</a>
                 </div>
             </div>
         )

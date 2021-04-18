@@ -1,19 +1,17 @@
 import { Component } from "react";
-import PropTypes from "prop-types"
+import PropTypes from "prop-types";
+import Canvas from "./drawing-canvas";
 
 export default class Drawer extends Component {
     
-    canvasInstance = null
-    
     constructor(props) {
         super(props)
-        this.state = {
-            
-        }
+        this.state = {}
+        this.canvasDOM = null;
     }
 
     submitDrawing = () => {
-        const drawingURL = this.canvasInstance?.toDataURL();
+        const drawingURL = this.canvasDOM?.toDataURL();
         this.props.onDrawingSubmit(this.state.word, drawingURL)
     }
 
@@ -23,7 +21,6 @@ export default class Drawer extends Component {
     }
 
     componentDidMount() {
-        this.canvasInstance = document.getElementById("drawingCanvas");
         this.fetchWord();
     }
 
@@ -36,7 +33,7 @@ export default class Drawer extends Component {
                 </div>
                 <div>
                     <p>Drawing</p>
-                    <canvas id="drawingCanvas"></canvas>
+                    <Canvas id="drawerCanvas" syncCanvasRef={(ref) => this.canvasDOM = ref} />
                 </div>
                 <button type="button" onClick={this.submitDrawing}>Submit</button>
             </div>

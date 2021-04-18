@@ -12,7 +12,7 @@ export default class Gamer extends Component {
     }
 
     componentDidMount() {
-        this.setState({ name: window.localStorage.getItem(GAMER_NAME_KEY) ?? "" })
+        this.changeName(window.localStorage.getItem(GAMER_NAME_KEY) ?? "")
     }
 
     changeName = (newName) => {
@@ -33,6 +33,5 @@ export default class Gamer extends Component {
 }
 
 Gamer.propTypes = {
-    onNameChange: PropTypes.func.isRequired,
-    name: PropTypes.string.isRequired
+    onNameChange: PropTypes.func.isRequired
 }
