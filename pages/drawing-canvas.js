@@ -43,6 +43,10 @@ class CanvasController {
     freeFormForTouch = (e) => {
         const { clientX, clientY } = e.targetTouches[0];
         this.drawLineTo(clientX, clientY);
+        // cancel bubbling to prevent the page from scrolling while the user is 
+        // drawing on canvas with their finger
+        e.stopPropagation();
+        e.preventDefault();
     }
 
     freeFormForMouse = (e) => {
@@ -89,9 +93,7 @@ export default class Canvas extends Component {
     componentDidMount() {
         const canvasRef = document.getElementById(this.props.id)
         this.props.syncCanvasRef(canvasRef)
-        this.canvasController = new CanvasController(canvasRef)
-        // Prevent page scroll on touch move. Gives a better canvas drawing experience on touch devices
-        document.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+        this.canvasController = new CanvasController(canvasRef);
     }
 
     render() {

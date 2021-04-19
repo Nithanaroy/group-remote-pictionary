@@ -99,8 +99,8 @@ export default class Arena extends Component {
     }
 
     copyContentForSharing = async (what) => {
-        const self = this;
-        function legacyCopy() {
+        const shareUrlMsg = `Visit ${this.getShareUrl()} to continue our pictionary game`
+        function legacyCopyURL() {
             // Credits: https://stackoverflow.com/a/48020189/1585523
             // const range = document.createRange()
             // range.selectNodeContents(document.getElementById("shareContentDiv"))
@@ -110,7 +110,7 @@ export default class Arena extends Component {
             // window.getSelection().removeAllRanges(); // to deselect
 
             const inpElem = document.createElement("input")
-            inpElem.setAttribute("value", self.getShareUrl())
+            inpElem.setAttribute("value", shareUrlMsg)
             document.body.appendChild(inpElem)
             inpElem.select()
             inpElem.setSelectionRange(0, 1000)
@@ -142,32 +142,33 @@ export default class Arena extends Component {
                     return;
                 }
             } else {
-                const urlBlob = new Blob([document.getElementById("shareContentDiv").innerText], { type: "text/plain" })
+                const urlBlob = new Blob([shareUrlMsg], { type: "text/plain" })
                 try {
                     await navigator.clipboard.write([new ClipboardItem({ [urlBlob.type]: urlBlob })])
                 } catch (error) {
                     console.error(error)
-                    legacyCopy()
+                    legacyCopyURL()
                 }
             }
         } else if (what === "url") {
-            legacyCopy();
+            legacyCopyURL();
         }
-        this.setAlertHelper("Successfully copied to your clipboard", "alert-success");
+        this.setAlertHelper("Successfully copied! Now go ahead and paste in your friends group", "alert-success");
     }
 
     showSharePopup = async () => {
-        if (navigator.share) {
-            const blob = await (await fetch(dataURL)).blob();
+        try {
+            const blob = await (await fetch(this.state.drawing)).blob();
             const drawingFile = new File([blob], 'drawing.png', { type: "image/png", lastModified: new Date() });
-            navigator.share({
+            await navigator.share({
                 "url": this.getShareUrl(),
-                // "text": "Some text",
+                "text": `Click on this link to continue our pictionary game`,
                 "title": "Let's play some pictionary",
                 "files": [drawingFile]
             })
-        } else {
-            this.setAlertHelper("Unfortunately, your browser doesn't support automatic sharing. Please try manually", "alert-warning")
+        } catch (err) {
+            // TODO: differentiate between AbortError that is fired on closing the share dialog without sharing versus a real programmatic error
+            console.error(err)
         }
     }
 
@@ -208,13 +209,15 @@ export default class Arena extends Component {
             <div>
                 <img src={this.state.drawing} className="img-thumbnail rounded mx-auto d-block mb-3" />
                 { this.state.mode === GUESS_MODE ? guesserTurnCompleteMessage : drawerTurnCompleteMessage}
-                <div id="shareContentDiv">
-                    <a href={this.getShareUrl()}>{this.getShareUrl()}</a>
+                <div id="shareContentDiv" className="card">
+                    <div className="card-body">
+                        <a href={this.getShareUrl()}>{this.getShareUrl()}</a>
+                    </div>
                 </div>
                 <div className="mt-3 d-grid gap-4 d-sm-block">
-                    <button className="btn btn-primary" onClick={() => this.copyContentForSharing("url")}>Copy URL</button>
-                    <button className="btn btn-primary" onClick={() => this.copyContentForSharing("drawing")}>Copy Drawing</button>
                     {this.state.isShareFeatureAvailable ? <button className="btn btn-primary" onClick={this.showSharePopup}>Share</button> : ""}
+                    <button className="btn btn-primary" onClick={() => this.copyContentForSharing("url")}>Copy game link</button>
+                    <button className="btn btn-primary" onClick={() => this.copyContentForSharing("drawing")}>or Copy the drawing</button>
                 </div>
             </div>
         )
