@@ -21,7 +21,8 @@ export default class Arena extends Component {
             showTurnCompleteScreen: false,
             gameUrl: "",
             alertMsg: "",
-            alertType: "alert-primary"
+            alertType: "alert-primary",
+            isShareFeatureAvailable: false
         }
     }
 
@@ -161,8 +162,8 @@ export default class Arena extends Component {
             const drawingFile = new File([blob], 'drawing.png', { type: "image/png", lastModified: new Date() });
             navigator.share({
                 "url": this.getShareUrl(),
-                "text": "Some text",
-                "title": "Some title",
+                // "text": "Some text",
+                "title": "Let's play some pictionary",
                 "files": [drawingFile]
             })
         } else {
@@ -173,6 +174,9 @@ export default class Arena extends Component {
     async componentDidMount() {
         await this.initializeRoom();
         this.setState({ gameUrl: window.location.href })
+        if (navigator.share) {
+            this.setState({ isShareFeatureAvailable: true });
+        }
     }
 
     render() {
@@ -209,8 +213,8 @@ export default class Arena extends Component {
                 </div>
                 <div className="mt-3 d-grid gap-4 d-sm-block">
                     <button className="btn btn-primary" onClick={() => this.copyContentForSharing("url")}>Copy URL</button>
-                    <button className="btn btn-primary"  onClick={() => this.copyContentForSharing("drawing")}>Copy Drawing</button>
-                    {navigator.share ? <button className="btn btn-primary" onClick={this.showSharePopup}>Share</button> : ""}
+                    <button className="btn btn-primary" onClick={() => this.copyContentForSharing("drawing")}>Copy Drawing</button>
+                    {this.state.isShareFeatureAvailable ? <button className="btn btn-primary" onClick={this.showSharePopup}>Share</button> : ""}
                 </div>
             </div>
         )
