@@ -20,7 +20,8 @@ export default class Arena extends Component {
             initializingRoom: true,
             showTurnCompleteScreen: false,
             gameUrl: "",
-            alertMsg: ""
+            alertMsg: "",
+            alertType: "alert-primary"
         }
     }
 
@@ -91,6 +92,84 @@ export default class Arena extends Component {
         }
     }
 
+    setAlertHelper = (msg, type = "alert-primary") => {
+        this.setState({ alertMsg: "" });
+        window.setTimeout(() => this.setState({ alertMsg: msg, alertType: type }), 100);
+    }
+
+    copyContentForSharing = async (what) => {
+        const self = this;
+        function legacyCopy() {
+            // Credits: https://stackoverflow.com/a/48020189/1585523
+            // const range = document.createRange()
+            // range.selectNodeContents(document.getElementById("shareContentDiv"))
+            // window.getSelection().removeAllRanges(); // clear current selection
+            // window.getSelection().addRange(range); // to select text
+            // document.execCommand("copy");
+            // window.getSelection().removeAllRanges(); // to deselect
+
+            const inpElem = document.createElement("input")
+            inpElem.setAttribute("value", self.getShareUrl())
+            document.body.appendChild(inpElem)
+            inpElem.select()
+            inpElem.setSelectionRange(0, 1000)
+            document.execCommand("copy");
+            inpElem.blur(); // to close the keyboard autopened on selection
+            document.body.removeChild(inpElem);
+        }
+
+        const showImageCopyError = () => this.setAlertHelper(
+            "Unfortunately, your browser doesnt support copying images automatically. Try to copy manually",
+            "alert-danger"
+        );
+
+        if (what === "drawing" && !navigator.clipboard) {
+            showImageCopyError();
+            return;
+        }
+
+        if (navigator.clipboard) {
+            if (what === "drawing") {
+                try {
+                    await navigator.clipboard.write([
+                        // Credits: https://stackoverflow.com/a/62677424/1585523
+                        new ClipboardItem({ "image/png": await (await fetch(this.state.drawing)).blob() })
+                    ])
+                } catch (error) {
+                    console.error(error)
+                    showImageCopyError();
+                    return;
+                }
+            } else {
+                const urlBlob = new Blob([document.getElementById("shareContentDiv").innerText], { type: "text/plain" })
+                try {
+                    await navigator.clipboard.write([new ClipboardItem({ [urlBlob.type]: urlBlob })])
+                } catch (error) {
+                    console.error(error)
+                    legacyCopy()
+                }
+            }
+        } else if (what === "url") {
+            legacyCopy();
+        }
+        this.setAlertHelper("Successfully copied to your clipboard", "alert-success");
+    }
+
+    showSharePopup = async () => {
+        if (navigator.share) {
+            const blob = await (await fetch(dataURL)).blob();
+            const drawingFile = new File([blob], 'drawing.png', { type: "image/png", lastModified: new Date() });
+            navigator.share({
+                "url": this.getShareUrl(),
+                "text": "Some text",
+                "title": "Some title",
+                "files": [drawingFile]
+            })
+        } else {
+            this.setAlertHelper("Unfortunately, your browser doesn't support automatic sharing. Please try manually", "alert-warning")
+        }
+    }
+
     async componentDidMount() {
         await this.initializeRoom();
         this.setState({ gameUrl: window.location.href })
@@ -98,14 +177,14 @@ export default class Arena extends Component {
 
     render() {
         const loadingRoomScreen = (
-            <div style={{display: "flex", alignItems: "center", flexDirection: "column"}}>
+            <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
                 <h1>Loading the room...</h1>
                 <p className="lead">Please wait</p>
             </div>
         )
         const guesser = <Guesser drawing={this.state.drawing} drawnBy={this.state.drawnBy} drawingOf={this.state.drawingOf} onCorrectGuess={this.finishGuesserTurn} />
         const readyRoomScreen = (
-            <div className="d-flex" style={{flexDirection: "column", flexGrow: 1}}>
+            <div className="d-flex" style={{ flexDirection: "column", flexGrow: 1 }}>
                 <Gamer onNameChange={newName => this.setState({ gamer: newName })} />
                 <p>You are in {this.state.roomName} room</p>
 
@@ -120,25 +199,30 @@ export default class Arena extends Component {
         )
 
         const drawerTurnCompleteMessage = <p>Awesome work! Now share this URL with your friends on any messaging app or WhatsApp group to continue the game</p>
-        const guesserTurnCompleteMessage = <p>Super guess! Challenge others by drawing the next word by visiting the below link or take a challenge again by sharing this URL with your friends on any messaging app or WhatsApp group to continue the game</p>
+        const guesserTurnCompleteMessage = <p>Super guess! Challenge others by drawing the next word waiting in the below link or share this URL with your friends on any messaging app or WhatsApp group to let others draw</p>
         const turnCompleteScreen = (
             <div>
                 <img src={this.state.drawing} className="img-thumbnail rounded mx-auto d-block mb-3" />
                 { this.state.mode === GUESS_MODE ? guesserTurnCompleteMessage : drawerTurnCompleteMessage}
-                <div>
+                <div id="shareContentDiv">
                     <a href={this.getShareUrl()}>{this.getShareUrl()}</a>
+                </div>
+                <div className="mt-3 d-grid gap-4 d-sm-block">
+                    <button className="btn btn-primary" onClick={() => this.copyContentForSharing("url")}>Copy URL</button>
+                    <button className="btn btn-primary"  onClick={() => this.copyContentForSharing("drawing")}>Copy Drawing</button>
+                    {navigator.share ? <button className="btn btn-primary" onClick={this.showSharePopup}>Share</button> : ""}
                 </div>
             </div>
         )
 
         const postLoadingScreen = this.state.showTurnCompleteScreen ? turnCompleteScreen : (this.state.roomId ? readyRoomScreen : roomNotFoundScreen)
         return (
-            <div className="d-flex" style={{flexDirection: "column", flexGrow: 1}}>
+            <div className="d-flex" style={{ flexDirection: "column", flexGrow: 1 }}>
                 <Head>
                     <title>Group Pictionary: {this.state.roomName} room</title>
                 </Head>
-                <Alert alertMsg={this.state.alertMsg} />
-                <div style={{flexGrow: 1, flexDirection: "column"}} className="d-flex">
+                <Alert alertMsg={this.state.alertMsg} type={this.state.alertType} />
+                <div style={{ flexGrow: 1, flexDirection: "column" }} className="d-flex">
                     {this.state.initializingRoom ? loadingRoomScreen : postLoadingScreen}
                 </div>
             </div>

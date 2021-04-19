@@ -8,16 +8,19 @@ export default class Guesser extends Component {
         super(props)
         this.state = {
             guess: "",
-            alertMsg: ""
+            alertMsg: "",
+            alertType: "alert-primary"
         }
     }
 
     validateGuess = () => {
         const correctGuess = this.props.drawingOf.toUpperCase() === this.state.guess.trim().toUpperCase();
         if (correctGuess) {
-            this.props.onCorrectGuess()
+            this.setState({ alertMsg: "Yippe! You got it!", alertType: "alert-success" });
+            this.props.onCorrectGuess();
         } else {
-            this.setState({ alertMsg: "Nope! try again" });
+            this.setState({ alertMsg: "", alertType: "alert-primary" });
+            window.setTimeout( () => this.setState({ alertMsg: "Nope! try again" }), 100 );
         }
     }
 
@@ -25,18 +28,21 @@ export default class Guesser extends Component {
         return (
             <div>
                 <h1>Guess the drawing</h1>
-                <Alert alertMsg={this.state.alertMsg} />
-                <form onSubmit={e => { e.preventDefault(); this.validateGuess(); }}>
-                    <div>
-                        <p>by {this.props.drawnBy}</p>
-                        <div><img src={this.props.drawing} alt="drawing to be guessed" /></div>
+                <p>by {this.props.drawnBy}</p>
+
+                <Alert alertMsg={this.state.alertMsg} type={this.state.alertType} />
+                <form className="row" onSubmit={e => { e.preventDefault(); this.validateGuess(); }}>
+                    <div><img src={this.props.drawing} alt="drawing to be guessed" className="img-thumbnail rounded mx-auto d-block mb-3" /></div>
+                    <div className="col-auto">
+                        <label htmlFor="guessTb" className="col-form-label">Your Guess</label>
                     </div>
-                    <div>
-                        <label htmlFor="guessTb">Your Guess</label>
-                        <input name="guessTb" type="text" value={this.state.guess} onChange={e => this.setState({ guess: e.target.value })} autoFocus autoComplete="off" />
+                    <div className="col-auto">
+                        <input name="guessTb" className="form-control" type="text" value={this.state.guess} onChange={e => this.setState({ guess: e.target.value })} autoFocus autoComplete="off" />
                     </div>
-                    <button type="button" onClick={this.validateGuess}>Submit</button>
+                    <div className="col-sm-12 col-md-5">
+                    </div>
                 </form>
+                <button className="mt-3 btn btn-success w-100" onClick={this.validateGuess}>Submit</button>
             </div>
         );
     }

@@ -6,7 +6,7 @@ export default class Home extends Component {
 
   render() {
     return (
-      <div style={{ minHeight: "100vh", flexDirection: "column" }} className="d-flex">
+      <div style={{ minHeight: "85vh", flexDirection: "column" }} className="d-flex">
         <nav className="navbar navbar-expand-lg navbar-light bg-light mb-3">
           <div className="container-fluid">
             <a className="navbar-brand" href="/">GP</a>
