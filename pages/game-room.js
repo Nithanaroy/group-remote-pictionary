@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { createRoom } from "../models/firestore-state-manager";
-import { extractRoomId } from "../scripts/game-room";
+import { extractRoomId, updateRoomIdInURL } from "../scripts/game-room";
 import Alert from "./alert";
 import Arena from "./arena";
 
@@ -16,7 +16,9 @@ export default class GameRoom extends Component {
 
     onCreateRoom = async () => {
         try {
-            this.setState({ roomId: await createRoom(this.state.roomName) });
+            const newRoomId = await createRoom(this.state.roomName)
+            this.setState({ roomId: newRoomId });
+            updateRoomIdInURL(newRoomId);
         } catch (error) {
             console.error(error);
             this.setState({ alertMsg: "Oops! Could not create room" });
@@ -29,20 +31,41 @@ export default class GameRoom extends Component {
 
     render() {
         const createRoomScreen = (
-            <div id="createRoomDiv">
-                <p>To start playing with a group of friends create a room</p>
+            <form id="createRoomDiv" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }} onSubmit={e => e.preventDefault()}>
+
+                <p className="lead text-center">Welcome! play pictionary with friends and family
+                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="everyone can play at their own leisure"> asynchronously</span>.
+                </p>
+                <p>The pictionary game that can be played forever.</p>
                 <div>
-                    <label htmlFor="roomNameTb">Room name</label>
-                    <input type="text" name="roomNameTb" onChange={(e) => this.setState({ roomName: e.target.value })} value={this.state.roomName} />
+                    Start a new game in 3 steps,
+                    <ol>
+                        <li>Create a game room for you &amp; your friends</li>
+                        <li>Make a drawing of the given word</li>
+                        <li>Finally share the given link with your friends directly or in a (WhatsApp) group</li>
+                    </ol>
                 </div>
-                <button type="button" onClick={this.onCreateRoom}>Create New Room</button>
-            </div>
+
+                <div className="row g-3 align-items-center mb-3">
+                    <div className="col-auto">
+                        <label htmlFor="roomNameTb" className="col-form-label">Room name</label>
+                    </div>
+                    <div className="col-auto">
+                        <input type="text" className="form-control" name="roomNameTb"
+                            onChange={(e) => this.setState({ roomName: e.target.value })} value={this.state.roomName} />
+                    </div>
+                    <div className="col-auto">
+                        <span id="roomNameHelp" className="form-text"></span>
+                    </div>
+                </div>
+                <button className="btn btn-primary" onClick={this.onCreateRoom}>Create New Room</button>
+            </form>
         )
 
         return (
-            <div>
+            <div style={{flexGrow: 1, flexDirection: "column"}} className="d-flex">
                 <Alert alertMsg={this.state.alertMsg} />
-                { this.state.roomId ? <Arena roomId={this.state.roomId} /> : createRoomScreen }
+                { this.state.roomId ? <Arena roomId={this.state.roomId} /> : createRoomScreen}
             </div>
         )
     }

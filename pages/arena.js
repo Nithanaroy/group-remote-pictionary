@@ -43,7 +43,7 @@ export default class Arena extends Component {
     _validateRoomState = () => {
         const validName = this.state.gamer.trim().length > 0
         if (!validName) {
-            this.setState({ alertMsg: "Please provide gamer's name" })
+            this.setState({ alertMsg: "Please provide gamer's (your) name" })
             return false
         }
         this.setState({ alertMsg: "" });
@@ -98,14 +98,14 @@ export default class Arena extends Component {
 
     render() {
         const loadingRoomScreen = (
-            <div>
-                <p>Loading the room...</p>
-                <p>Please wait</p>
+            <div style={{display: "flex", alignItems: "center", flexDirection: "column"}}>
+                <h1>Loading the room...</h1>
+                <p className="lead">Please wait</p>
             </div>
         )
         const guesser = <Guesser drawing={this.state.drawing} drawnBy={this.state.drawnBy} drawingOf={this.state.drawingOf} onCorrectGuess={this.finishGuesserTurn} />
         const readyRoomScreen = (
-            <div>
+            <div className="d-flex" style={{flexDirection: "column", flexGrow: 1}}>
                 <Gamer onNameChange={newName => this.setState({ gamer: newName })} />
                 <p>You are in {this.state.roomName} room</p>
 
@@ -113,9 +113,9 @@ export default class Arena extends Component {
             </div>
         )
         const roomNotFoundScreen = (
-            <div>
-                <p>OOPS! Looks like you are in the wrong place</p>
-                <p>Find the right room link or <a href="/">go here</a> to create a new room</p>
+            <div className="text-center">
+                <h3 className="mb-4">OOPS! Looks like you are in the wrong place</h3>
+                <p className="lead">Find the right room link or <a href="/">go here</a> to create a new room</p>
             </div>
         )
 
@@ -123,7 +123,7 @@ export default class Arena extends Component {
         const guesserTurnCompleteMessage = <p>Super guess! Challenge others by drawing the next word by visiting the below link or take a challenge again by sharing this URL with your friends on any messaging app or WhatsApp group to continue the game</p>
         const turnCompleteScreen = (
             <div>
-                <img src={this.state.drawing} />
+                <img src={this.state.drawing} className="img-thumbnail rounded mx-auto d-block mb-3" />
                 { this.state.mode === GUESS_MODE ? guesserTurnCompleteMessage : drawerTurnCompleteMessage}
                 <div>
                     <a href={this.getShareUrl()}>{this.getShareUrl()}</a>
@@ -133,12 +133,14 @@ export default class Arena extends Component {
 
         const postLoadingScreen = this.state.showTurnCompleteScreen ? turnCompleteScreen : (this.state.roomId ? readyRoomScreen : roomNotFoundScreen)
         return (
-            <div>
+            <div className="d-flex" style={{flexDirection: "column", flexGrow: 1}}>
                 <Head>
                     <title>Group Pictionary: {this.state.roomName} room</title>
                 </Head>
                 <Alert alertMsg={this.state.alertMsg} />
-                {this.state.initializingRoom ? loadingRoomScreen : postLoadingScreen}
+                <div style={{flexGrow: 1, flexDirection: "column"}} className="d-flex">
+                    {this.state.initializingRoom ? loadingRoomScreen : postLoadingScreen}
+                </div>
             </div>
         )
     }

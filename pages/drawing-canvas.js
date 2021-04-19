@@ -3,16 +3,18 @@ import { PropTypes } from "prop-types";
 
 // Forked from https://github.com/Nithanaroy/invisible_pen/blob/master/app/client/helpers/drawing_canvas.js
 class CanvasController {
-    constructor(canvasContainer, initX = null, initY = null) {
-        this.c = canvasContainer;
-        this.ctx = canvasContainer.getContext("2d");
+    constructor(canvasElem, initX = null, initY = null) {
+        this.c = canvasElem;
+        this.ctx = canvasElem.getContext("2d");
         this.lastX = initX;
         this.lastY = initY;
+        this.xScale = 1
+        this.yScale = 1
 
-        canvasContainer.addEventListener("touchstart", this.initPathCoordsForTouch); // fires before the finger is lifted
-        canvasContainer.addEventListener("touchmove", this.freeFormForTouch);
-        canvasContainer.addEventListener("mousedown", this.initPathCoordsForMouse); // fires before mouse left btn is released
-        canvasContainer.addEventListener("mousemove", this.freeFormForMouse);
+        canvasElem.addEventListener("touchstart", this.initPathCoordsForTouch); // fires before the finger is lifted
+        canvasElem.addEventListener("touchmove", this.freeFormForTouch);
+        canvasElem.addEventListener("mousedown", this.initPathCoordsForMouse); // fires before mouse left btn is released
+        canvasElem.addEventListener("mousemove", this.freeFormForMouse);
 
         this.setStyles();
     }
@@ -31,9 +33,11 @@ class CanvasController {
     }
 
     initPathCoords = (userX, userY) => {
-        const { x, y } = this.c.getBoundingClientRect();
-        this.lastX = userX - x;
-        this.lastY = userY - y;
+        const { x, y, width, height } = this.c.getBoundingClientRect();
+        this.xScale = this.c.width / width;
+        this.yScale = this.c.height / height;
+        this.lastX = (userX - x) * this.xScale;
+        this.lastY = (userY - y) * this.yScale;
     };
 
     freeFormForTouch = (e) => {
@@ -52,11 +56,11 @@ class CanvasController {
      * @param Y: Y coordinate
      * @param areAbsoluteCoords: Are X and Y absolute on screen or relative to canvas?
      */
-    drawLineTo = (X, Y, areAbsoluteCoords = true) => {
+    drawLineTo = (X, Y) => {
         // Compute relative position w.r.t the canvas
-        const { x, y } = areAbsoluteCoords ? this.c.getBoundingClientRect() : { x: 0, y: 0 };
-        const relativeX = X - x;
-        const relativeY = Y - y;
+        const { x, y } = this.c.getBoundingClientRect()
+        const relativeX = (X - x) * this.xScale;
+        const relativeY = (Y - y) * this.yScale;
 
         // Initialize at runtime if not set earlier
         if (this.lastX == null) {
@@ -92,9 +96,13 @@ export default class Canvas extends Component {
 
     render() {
         return (
-            <div>
-                <button onClick={() => this.canvasController.cleanCanvas()}>Clear canvas</button>
-                <canvas id={this.props.id} style={{ border: "1px solid #CCC" }} ></canvas>
+            <div className="d-flex" style={{ flexDirection: "column", flexGrow: 1 }}>
+                <div className="mb-3">
+                    <button className="btn btn-warning" onClick={() => this.canvasController.cleanCanvas()}>Clear canvas</button>
+                </div>
+                <div style={{ flexGrow: 1, flexDirection: "column", alignItems: "center" }} className="mb-3 d-flex">
+                    <canvas id={this.props.id} style={{ border: "0.5rem groove #CCC", width: "100%", height: "100%" }} ></canvas>
+                </div>
             </div>
         )
     }

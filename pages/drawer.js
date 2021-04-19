@@ -26,15 +26,11 @@ export default class Drawer extends Component {
 
     render() {
         return (
-            <div>
+            <div className="d-flex mb-3" style={{flexDirection: "column", flexGrow: 1}}>
                 <h1>Time to draw...</h1>
-                <div>
-                    <p>Word: <strong>{this.state.word}</strong></p>
-                </div>
-                <div>
-                    <Canvas id="drawerCanvas" syncCanvasRef={(ref) => this.canvasDOM = ref} />
-                </div>
-                <button type="button" onClick={this.submitDrawing}>Submit</button>
+                <p>Word: <strong>{this.state.word}</strong></p>
+                <Canvas id="drawerCanvas" syncCanvasRef={(ref) => this.canvasDOM = ref} />
+                <button className="btn btn-success" type="button" onClick={this.submitDrawing}>Submit</button>
             </div>
         )
     }

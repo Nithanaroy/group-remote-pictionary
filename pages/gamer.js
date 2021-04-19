@@ -22,11 +22,17 @@ export default class Gamer extends Component {
 
     render() {
         return (
-            <div>
-                <label htmlFor="gamerNameTb">Name</label>
-                <input type="text" name="gamerNameTb" value={this.state.name}
-                    onChange={e => this.changeName(e.target.value) }
-                    onBlur={() => window.localStorage.setItem(GAMER_NAME_KEY, this.state.name)} />
+
+            <div className="row g-3 align-items-center mb-3">
+                <div className="col-auto">
+                    <label htmlFor="gamerNameTb" className="col-form-label">Your name</label>
+                </div>
+                <div className="col-auto">
+                    <input type="text" className="form-control" name="gamerNameTb"
+                        value={this.state.name}
+                        onChange={e => this.changeName(e.target.value)}
+                        onBlur={() => window.localStorage.setItem(GAMER_NAME_KEY, this.state.name)} />
+                </div>
             </div>
         )
     }
