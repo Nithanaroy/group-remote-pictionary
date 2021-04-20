@@ -1,9 +1,12 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
 import Canvas from "./drawing-canvas";
+import * as wordGenerators from "../scripts/word-generator";
+
+const DEV_TESTING_ROOM_ID = "tMCCZVKkirRhCPdZHrTi";
 
 export default class Drawer extends Component {
-    
+
     constructor(props) {
         super(props)
         this.state = {}
@@ -16,8 +19,11 @@ export default class Drawer extends Component {
     }
 
     fetchWord = () => {
-        // https://www.thegamegal.com/printables/
-        this.setState({ word: "Banana" });
+        if (this.props.roomId === DEV_TESTING_ROOM_ID) {
+            this.setState({ word: "Banana" });
+        } else {
+            this.setState({ word: wordGenerators.generateEasyWord() });
+        }
     }
 
     componentDidMount() {
@@ -26,9 +32,9 @@ export default class Drawer extends Component {
 
     render() {
         return (
-            <div className="d-flex mb-3" style={{flexDirection: "column", flexGrow: 1}}>
+            <div className="d-flex mb-3" style={{ flexDirection: "column", flexGrow: 1 }}>
                 <h1>Time to draw...</h1>
-                <p>Word: <strong>{this.state.word}</strong></p>
+                <div>Word: <strong>{this.state.word}</strong> [ <a href="#" onClick={this.fetchWord} class="link-primary">try another</a> ]</div>
                 <Canvas id="drawerCanvas" syncCanvasRef={(ref) => this.canvasDOM = ref} />
                 <button className="btn btn-success" type="button" onClick={this.submitDrawing}>Submit</button>
             </div>
@@ -37,5 +43,6 @@ export default class Drawer extends Component {
 }
 
 Drawer.propTypes = {
-    onDrawingSubmit: PropTypes.func.isRequired
+    onDrawingSubmit: PropTypes.func.isRequired,
+    // roomId: PropTypes.string.isRequired // TODO: erroring as we fetch the roomId only after the DOM renders from the URL
 }

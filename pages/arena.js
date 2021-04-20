@@ -193,7 +193,7 @@ export default class Arena extends Component {
                 <Gamer onNameChange={newName => this.setState({ gamer: newName })} />
                 <p>You are in {this.state.roomName} room</p>
 
-                {this.state.mode === GUESS_MODE ? guesser : <Drawer onDrawingSubmit={this.finishDrawerTurn} />}
+                {this.state.mode === GUESS_MODE ? guesser : <Drawer onDrawingSubmit={this.finishDrawerTurn} roomId={this.state.roomId} />}
             </div>
         )
         const roomNotFoundScreen = (

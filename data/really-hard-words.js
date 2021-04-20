@@ -1,0 +1,22 @@
+export default [
+    "vision", "loiterer", "observatory",
+    "century", "Atlantis", "kilogram",
+    "neutron", "stowaway", "psychologist",
+    "exponential", "aristocrat", "eureka",
+    "parody", "cartography", "figment",
+    "philosopher", "tinting", "overture",
+    "opaque", "Everglades", "ironic",
+    "zero", "landfill", "implode",
+    "czar", "armada", "crisp",
+    "stockholder", "inquisition", "mooch",
+    "gallop", "archaeologist", "blacksmith",
+    "addendum", "upgrade", "hang ten",
+    "acre", "twang", "mine car",
+    "protestant", "brunette", "stout",
+    "quarantine", "tutor", "positive",
+    "champion", "pastry", "tournament",
+    "Chick-fil-A", "rainwater", "random",
+    "lyrics", "ice fishing", "clue",
+    "flutter", "slump", "ligament",
+    "flotsam", "siesta", "pomp"
+]

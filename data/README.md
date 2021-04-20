@@ -1,0 +1,1 @@
+Huge credits to https://www.thegamegal.com/printables/ for the word lists.

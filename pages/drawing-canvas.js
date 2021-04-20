@@ -99,7 +99,7 @@ export default class Canvas extends Component {
     render() {
         return (
             <div className="d-flex" style={{ flexDirection: "column", flexGrow: 1 }}>
-                <div className="mb-3">
+                <div className="mb-3 d-flex justify-content-end">
                     <button className="btn btn-warning" onClick={() => this.canvasController.cleanCanvas()}>Clear canvas</button>
                 </div>
                 <div style={{ flexGrow: 1, flexDirection: "column", alignItems: "center" }} className="mb-3 d-flex">
