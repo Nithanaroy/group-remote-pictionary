@@ -8,6 +8,7 @@ import { defaultRoomState } from "../models/state-manager";
 import { getRoomState, updateRoomState } from "../models/firestore-state-manager";
 import Gamer from "./gamer";
 import Alert from "./alert";
+import Leaderboard from "./leaderboard";
 
 const [GUESS_MODE, DRAW_MODE] = ["guess", "draw"]
 
@@ -191,9 +192,15 @@ export default class Arena extends Component {
         const readyRoomScreen = (
             <div className="d-flex" style={{ flexDirection: "column", flexGrow: 1 }}>
                 <Gamer onNameChange={newName => this.setState({ gamer: newName })} />
-                <p>You are in {this.state.roomName} room</p>
+                <p className="text-center">
+                    {this.state.roomName}'s 
+                    <span className="text-end">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#leaderboard" onClick={this.fetchWord} className="link-primary mx-1">Leaderboard</a>🏆
+                    </span>
+                    </p>
 
                 {this.state.mode === GUESS_MODE ? guesser : <Drawer onDrawingSubmit={this.finishDrawerTurn} roomId={this.state.roomId} />}
+                <Leaderboard id="leaderboard" drawingScores={this.state.drawingScores} guessingScores={this.state.guessingScores} />
             </div>
         )
         const roomNotFoundScreen = (
@@ -214,10 +221,19 @@ export default class Arena extends Component {
                         <a href={this.getShareUrl()}>{this.getShareUrl()}</a>
                     </div>
                 </div>
-                <div className="mt-3 d-grid gap-4 d-sm-block">
-                    {this.state.isShareFeatureAvailable ? <button className="btn btn-primary" onClick={this.showSharePopup}>Share</button> : ""}
-                    <button className="btn btn-primary" onClick={() => this.copyContentForSharing("url")}>Copy game link</button>
-                    <button className="btn btn-primary" onClick={() => this.copyContentForSharing("drawing")}>or Copy the drawing</button>
+                {/* <div className="mt-4 d-grid gap-4 g-3 d-md-flex justify-content-around"> */}
+                <div className="mt-3 row row-cols-1 g-3 row-cols-sm-2 gx-sm-3 row-cols-md-3">
+                    {this.state.isShareFeatureAvailable ? (
+                        <div className="col">
+                            <button className="btn btn-primary w-100" onClick={this.showSharePopup}>Share</button>
+                        </div>
+                    ) : ""}
+                    <div className="col">
+                        <button className="btn btn-primary w-100" onClick={() => this.copyContentForSharing("url")}>Copy game link</button>
+                    </div>
+                    <div className="col col-sm-12">
+                        <button className="btn btn-primary w-100" onClick={() => this.copyContentForSharing("drawing")}>or Copy the drawing</button>
+                    </div>
                 </div>
             </div>
         )

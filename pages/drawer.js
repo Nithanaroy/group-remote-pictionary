@@ -33,8 +33,8 @@ export default class Drawer extends Component {
     render() {
         return (
             <div className="d-flex mb-3" style={{ flexDirection: "column", flexGrow: 1 }}>
-                <h1>Time to draw...</h1>
-                <div>Word: <strong>{this.state.word}</strong> [ <a href="#" onClick={this.fetchWord} class="link-primary">try another</a> ]</div>
+                <h1>Drawing Time</h1>
+                <div>Word: <strong>{this.state.word}</strong> [ <a href="#" onClick={this.fetchWord} className="link-primary">try another</a> ]</div>
                 <Canvas id="drawerCanvas" syncCanvasRef={(ref) => this.canvasDOM = ref} />
                 <button className="btn btn-success" type="button" onClick={this.submitDrawing}>Submit</button>
             </div>

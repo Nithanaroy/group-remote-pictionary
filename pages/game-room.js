@@ -42,7 +42,7 @@ export default class GameRoom extends Component {
                     <ol>
                         <li>Create a game room for you &amp; your friends</li>
                         <li>Make a drawing of the given word</li>
-                        <li>Finally share the given link with your friends directly or in a (WhatsApp) group</li>
+                        <li>Finally share a unique link with your friends on WhatsApp or elsewhere</li>
                     </ol>
                 </div>
 

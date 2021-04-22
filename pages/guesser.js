@@ -32,7 +32,7 @@ export default class Guesser extends Component {
 
                 <Alert alertMsg={this.state.alertMsg} type={this.state.alertType} />
                 <form className="row" onSubmit={e => { e.preventDefault(); this.validateGuess(); }}>
-                    <div><img src={this.props.drawing} alt="drawing to be guessed" className="img-thumbnail rounded mx-auto d-block mb-3" /></div>
+                    <div><img src={this.props.drawing} alt="drawing to be guessed" className="img-thumbnail rounded mb-3" /></div>
                     <div className="col-auto">
                         <label htmlFor="guessTb" className="col-form-label">Your Guess</label>
                     </div>
@@ -42,7 +42,7 @@ export default class Guesser extends Component {
                     <div className="col-sm-12 col-md-5">
                     </div>
                 </form>
-                <button className="mt-3 btn btn-success w-100" onClick={this.validateGuess}>Submit</button>
+                <button className="mt-3 btn btn-success col-12 col-md-6" onClick={this.validateGuess}>Submit</button>
             </div>
         );
     }

@@ -16,8 +16,9 @@ export default class Gamer extends Component {
     }
 
     changeName = (newName) => {
-        this.setState({ name: newName })
-        this.props.onNameChange(newName)
+        const cleanedName = newName.trim()
+        this.setState({ name: cleanedName })
+        this.props.onNameChange(cleanedName)
     }
 
     render() {
