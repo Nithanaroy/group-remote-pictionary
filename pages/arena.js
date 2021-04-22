@@ -9,6 +9,7 @@ import { getRoomState, updateRoomState } from "../models/firestore-state-manager
 import Gamer from "./gamer";
 import Alert from "./alert";
 import Leaderboard from "./leaderboard";
+import { saveRoomToDisk } from "../scripts/game-room";
 
 const [GUESS_MODE, DRAW_MODE] = ["guess", "draw"]
 
@@ -32,6 +33,7 @@ export default class Arena extends Component {
             const roomState = await getRoomState(this.props.roomId);
             if (roomState) {
                 this.setState({ ...roomState, roomNotFoundError: false });
+                saveRoomToDisk(roomState.roomName, roomState.roomId)
             } else {
                 this.setState({ roomNotFoundError: true });
             }

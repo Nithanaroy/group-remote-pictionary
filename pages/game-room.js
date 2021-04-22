@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { createRoom } from "../models/firestore-state-manager";
-import { extractRoomId, updateRoomIdInURL } from "../scripts/game-room";
+import { extractRoomId, updateRoomIdInURL, retrieveRecentRooms, ROOM_ID_KEY } from "../scripts/game-room";
 import Alert from "./alert";
 import Arena from "./arena";
 
@@ -10,7 +10,8 @@ export default class GameRoom extends Component {
         this.state = {
             alertMsg: "",
             roomId: "",
-            roomName: ""
+            roomName: "",
+            recentRooms: []
         }
     }
 
@@ -26,7 +27,7 @@ export default class GameRoom extends Component {
     }
 
     componentDidMount() {
-        this.setState({ roomId: extractRoomId() });
+        this.setState({ roomId: extractRoomId(), recentRooms: retrieveRecentRooms() });
     }
 
     render() {
@@ -62,10 +63,30 @@ export default class GameRoom extends Component {
             </form>
         )
 
+        const recentRoomsScreen = (
+            <div className={`list-group-flush ${this.state.recentRooms.length === 0 ? "d-none" : ""}`}>
+                <p className="display-6">Or join one of your previous rooms</p>
+                {this.state.recentRooms.map(room => (
+                    <a key={room.roomId} href={`/?roomId=${room.roomId}`} class="list-group-item list-group-item-action">{room.roomName}</a>
+                ))}
+            </div>
+        )
+
+        const gameRoomScreen = (
+            <div className="d-grid row">
+                <div className="col">
+                    {createRoomScreen}
+                </div>
+                <div className="col gy-5">
+                    {recentRoomsScreen}
+                </div>
+            </div>
+        )
+
         return (
-            <div style={{flexGrow: 1, flexDirection: "column"}} className="d-flex">
+            <div style={{ flexGrow: 1, flexDirection: "column" }} className="d-flex">
                 <Alert alertMsg={this.state.alertMsg} />
-                { this.state.roomId ? <Arena roomId={this.state.roomId} /> : createRoomScreen}
+                { this.state.roomId ? <Arena roomId={this.state.roomId} /> : gameRoomScreen}
             </div>
         )
     }
