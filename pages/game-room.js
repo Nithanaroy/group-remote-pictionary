@@ -4,6 +4,8 @@ import { extractRoomId, updateRoomIdInURL, retrieveRecentRooms, ROOM_ID_KEY } fr
 import Alert from "./alert";
 import Arena from "./arena";
 
+const MIN_ROOM_NAME_LENGTH = 3
+
 export default class GameRoom extends Component {
     constructor(props) {
         super(props);
@@ -15,11 +17,20 @@ export default class GameRoom extends Component {
         }
     }
 
+    _validateRoom = () => {
+        return this.state.roomName.trim().length >= MIN_ROOM_NAME_LENGTH
+    }
+
     onCreateRoom = async () => {
         try {
-            const newRoomId = await createRoom(this.state.roomName)
-            this.setState({ roomId: newRoomId });
-            updateRoomIdInURL(newRoomId);
+            if (this._validateRoom()) {
+                const newRoomId = await createRoom(this.state.roomName)
+                this.setState({ alertMsg: "" })
+                this.setState({ roomId: newRoomId }); // navigates to the room
+                updateRoomIdInURL(newRoomId);
+            } else {
+                this.setState({alertMsg: `Room name should have atleast 3 letters`})
+            }
         } catch (error) {
             console.error(error);
             this.setState({ alertMsg: "Oops! Could not create room" });
@@ -52,7 +63,7 @@ export default class GameRoom extends Component {
                         <label htmlFor="roomNameTb" className="col-form-label">Room name</label>
                     </div>
                     <div className="col-auto">
-                        <input type="text" className="form-control" name="roomNameTb"
+                        <input type="text" className="form-control" name="roomNameTb" minLength={MIN_ROOM_NAME_LENGTH}
                             onChange={(e) => this.setState({ roomName: e.target.value })} value={this.state.roomName} />
                     </div>
                     <div className="col-auto">
