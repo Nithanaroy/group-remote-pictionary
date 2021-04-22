@@ -4,7 +4,7 @@
 
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore, collection, addDoc, query, where, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import { initializePerformance as initializePerformanceTracking } from "firebase/performance";
+import { initializePerformance as initializePerformanceTracking, getPerformance  } from "firebase/performance";
 
 import { defaultRoomState } from "./state-manager";
 
@@ -49,5 +49,9 @@ export async function updateRoomState(roomId, newRoomState) {
 }
 
 export function initializeTracking() {
-    initializePerformanceTracking(app)
+    try {
+        initializePerformanceTracking(app)
+    } catch (error) {
+        console.error(error)
+    }
 }

@@ -21,7 +21,13 @@ export default class Home extends Component {
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav">
                 <li className="nav-item">
-                  <a className="nav-link active" aria-current="page" href="/">Create New Game Room</a>
+                  <a className="nav-link" aria-current="page" href="/">Create New Game Room</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" aria-current="page" href="https://github.com/Nithanaroy/group-remote-pictionary/discussions">Feedback or Questions</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" aria-current="page" href="https://github.com/Nithanaroy/group-remote-pictionary">Source code</a>
                 </li>
               </ul>
             </div>

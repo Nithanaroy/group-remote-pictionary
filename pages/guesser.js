@@ -15,7 +15,7 @@ export default class Guesser extends Component {
 
     validateGuess = () => {
         if (this.props.gamer === this.props.drawnBy) {
-            this.setState({ alertMsg: "Meh! It is boring to guess your own drawing. Let see if someone else guesses it :)"});
+            this.setState({ alertMsg: "Meh! It is boring to guess your own drawing. Let us see if someone else guesses it :)"});
             return
         }
         const correctGuess = this.props.drawingOf.toUpperCase() === this.state.guess.trim().toUpperCase();
