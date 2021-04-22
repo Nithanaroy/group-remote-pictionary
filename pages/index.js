@@ -1,8 +1,13 @@
 import Head from "next/head";
 import { Component } from "react";
 import GameRoom from "./game-room";
+import { initializeTracking } from "../models/firestore-state-manager";
 
 export default class Home extends Component {
+
+  componentDidMount() {
+    initializeTracking();
+  }
 
   render() {
     return (
@@ -23,7 +28,7 @@ export default class Home extends Component {
           </div>
         </nav>
 
-        <div className="container-sm d-flex" style={{flexGrow: 1}}>
+        <div className="container-sm d-flex" style={{ flexGrow: 1 }}>
           <Head>
             <title>Group Pictionary</title>
             <meta charSet="utf-8" />

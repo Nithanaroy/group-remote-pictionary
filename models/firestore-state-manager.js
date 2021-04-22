@@ -4,6 +4,7 @@
 
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore, collection, addDoc, query, where, doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { initializePerformance as initializePerformanceTracking } from "firebase/performance";
 
 import { defaultRoomState } from "./state-manager";
 
@@ -18,7 +19,8 @@ const firebaseConfig = {
     measurementId: "G-N99QS9DMH7"
 };
 
-getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+
 const db = getFirestore();
 const ROOMS_COLLECTION = "rooms"
 
@@ -44,4 +46,8 @@ export async function updateRoomState(roomId, newRoomState) {
     const roomRef = doc(db, ROOMS_COLLECTION, roomId);
     const stateToSave = { ...newRoomState, updatedAt: serverTimestamp() }
     await setDoc(roomRef, stateToSave, { merge: true });
+}
+
+export function initializeTracking() {
+    initializePerformanceTracking(app)
 }

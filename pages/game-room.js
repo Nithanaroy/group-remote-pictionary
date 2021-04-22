@@ -67,7 +67,7 @@ export default class GameRoom extends Component {
             <div className={`list-group-flush ${this.state.recentRooms.length === 0 ? "d-none" : ""}`}>
                 <p className="display-6">Or join one of your previous rooms</p>
                 {this.state.recentRooms.map(room => (
-                    <a key={room.roomId} href={`/?roomId=${room.roomId}`} class="list-group-item list-group-item-action">{room.roomName}</a>
+                    <a key={room.roomId} href={`/?roomId=${room.roomId}`} className="list-group-item list-group-item-action">{room.roomName}</a>
                 ))}
             </div>
         )
