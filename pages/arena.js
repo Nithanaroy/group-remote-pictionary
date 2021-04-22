@@ -188,7 +188,7 @@ export default class Arena extends Component {
                 <p className="lead">Please wait</p>
             </div>
         )
-        const guesser = <Guesser drawing={this.state.drawing} drawnBy={this.state.drawnBy} drawingOf={this.state.drawingOf} onCorrectGuess={this.finishGuesserTurn} />
+        const guesser = <Guesser gamer={this.state.gamer} drawing={this.state.drawing} drawnBy={this.state.drawnBy} drawingOf={this.state.drawingOf} onCorrectGuess={this.finishGuesserTurn} />
         const readyRoomScreen = (
             <div className="d-flex" style={{ flexDirection: "column", flexGrow: 1 }}>
                 <Gamer onNameChange={newName => this.setState({ gamer: newName })} />
@@ -221,7 +221,6 @@ export default class Arena extends Component {
                         <a href={this.getShareUrl()}>{this.getShareUrl()}</a>
                     </div>
                 </div>
-                {/* <div className="mt-4 d-grid gap-4 g-3 d-md-flex justify-content-around"> */}
                 <div className="mt-3 row row-cols-1 g-3 row-cols-sm-2 gx-sm-3 row-cols-md-3">
                     {this.state.isShareFeatureAvailable ? (
                         <div className="col">
@@ -235,6 +234,13 @@ export default class Arena extends Component {
                         <button className="btn btn-primary w-100" onClick={() => this.copyContentForSharing("drawing")}>or Copy the drawing</button>
                     </div>
                 </div>
+
+                <hr />
+                <p className="mt-3 lead text-center">
+                    Checkout the current standings on the <a href="#" data-bs-toggle="modal" data-bs-target="#leaderboard" onClick={this.fetchWord} className="link-primary mx-1">leaderboard</a>🏆
+                </p>
+                <Leaderboard id="leaderboard" drawingScores={this.state.drawingScores} guessingScores={this.state.guessingScores} />
+                
             </div>
         )
 

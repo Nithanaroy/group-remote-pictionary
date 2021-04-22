@@ -14,6 +14,10 @@ export default class Guesser extends Component {
     }
 
     validateGuess = () => {
+        if (this.props.gamer === this.props.drawnBy) {
+            this.setState({ alertMsg: "Meh! It is boring to guess your own drawing. Let see if someone else guesses it :)"});
+            return
+        }
         const correctGuess = this.props.drawingOf.toUpperCase() === this.state.guess.trim().toUpperCase();
         if (correctGuess) {
             this.setState({ alertMsg: "Yippe! You got it!", alertType: "alert-success" });
@@ -50,6 +54,7 @@ export default class Guesser extends Component {
 
 Guesser.propTypes = {
     onCorrectGuess: PropTypes.func.isRequired,
+    gamer: PropTypes.string.isRequired,
     drawing: PropTypes.string.isRequired,
     drawingOf: PropTypes.string.isRequired,
     drawnBy: PropTypes.string.isRequired
